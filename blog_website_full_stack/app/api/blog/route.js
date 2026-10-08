@@ -3,66 +3,22 @@ import BlogModel from "@/lib/models/BlogModels";
 import {writeFile} from 'fs/promises';
 import { NextResponse } from "next/server";
 import path from "path";
+import { slugify } from "@/lib/utils/slug";
+import { requireAdmin } from "@/lib/auth/requireAdmin";
 
 const fs = require('fs')
 
+async function ensureUniqueSlug(baseSlug) {
+  let slug = baseSlug || "post";
+  let suffix = 0;
 
-// // const { NextResponse } = require("next/server");
+  while (await BlogModel.findOne({ slug })) {
+    suffix += 1;
+    slug = `${baseSlug}-${suffix}`;
+  }
 
-// const LoadDB = async () => {
-//     await ConnectDB();
-// }
-
-// LoadDB();
-
-
-
-// // API Endpoint to get all Blogs
-// export async function GET(request) {
-
-//     try {
-//         const blogs = await BlogModel.find().sort({ createdAt: -1 }); // newest first
-
-//         return NextResponse.json({ success: true, blogs });
-//     } catch (error) {
-//         console.error("Error fetching blogs:", error);
-//         return NextResponse.json({ success: false, message: "Failed to fetch blogs" }, { status: 500 });
-//     }
-// }
-
-
-
-// // API Endpoint for Uploding Blogs
-// export async function POST(request){
-//     const formData = await request.formData();
-//     const timestamp = Date.now();
-
-//     const image = formData.get('image');
-
-//     const imageByteData = await image.arrayBuffer();
-//     const buffer = Buffer.from(imageByteData);
-//     const path = `./public/${timestamp}_${image.name}`;
-//     await writeFile(path,buffer);
-
-//     const imgUrl = `/${timestamp}_${image.name}`
-    
-//     const blogData = {
-//         title: `${formData.get("title")}`,
-//         description: `${formData.get('description')}`,
-//         category:`${formData.get('category')}`,
-//         author:`${formData.get('author')}`,
-//         image:`${imgUrl}`,
-//         authorImg:`${formData.get('authorImg')}`
-//     }
-
-//     await BlogModel.create(blogData);
-//     console.log("Blog Saved");
-
-//     return NextResponse.json({success:true,msg:"Blog Added"})
-
-// }
-
-
+  return slug;
+}
 
 // GET all blogs or a single blog by ID
 export async function GET(request) {
@@ -74,7 +30,16 @@ export async function GET(request) {
 
     // Case 1: Get a single blog by ID
     if (blogId) {
-      const blog = await BlogModel.findById(blogId);
+      const decodedId = decodeURIComponent(blogId);
+      const isObjectId = /^[a-f\d]{24}$/i.test(decodedId);
+
+      let blog = isObjectId
+        ? await BlogModel.findById(decodedId)
+        : await BlogModel.findOne({ slug: decodedId });
+
+      if (!blog && !isObjectId) {
+        blog = await BlogModel.findById(decodedId);
+      }
 
       if (!blog) {
         return NextResponse.json(
@@ -101,7 +66,10 @@ export async function GET(request) {
 
 // POST new blog
 export async function POST(request) {
-    await ConnectDB(); // ✅ move connection inside handler
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
+    await ConnectDB(); //  move connection inside handler
 
     const formData = await request.formData();
     const timestamp = Date.now();
@@ -116,8 +84,14 @@ export async function POST(request) {
 
     const imgUrl = `/${fileName}`;
 
+    const title = formData.get("title");
+    const slugInput = (formData.get("slug") || "").trim();
+    const baseSlug = slugify(slugInput || title);
+    const slug = await ensureUniqueSlug(baseSlug);
+
     const blogData = {
-        title: formData.get("title"),
+        title,
+        slug,
         description: formData.get('description'),
         category: formData.get('category'),
         author: formData.get('author'),
@@ -126,7 +100,7 @@ export async function POST(request) {
     };
 
     await BlogModel.create(blogData);
-    console.log("✅ Blog Saved");
+    console.log(" Blog Saved");
 
     return NextResponse.json({ success: true, msg: "Blog Added" });
 }
@@ -136,6 +110,9 @@ export async function POST(request) {
 // ceating API Endpoint to delete Blog
 
 export async function DELETE(request){
+  const { error } = await requireAdmin(request);
+  if (error) return error;
+
   const id = await request.nextUrl.searchParams.get('id');
   const blog = await BlogModel.findById(id);
   fs.unlink(`./public${blog.image}`, () => {})

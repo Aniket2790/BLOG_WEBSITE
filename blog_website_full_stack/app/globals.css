@@ -1,45 +1,112 @@
 @import "tailwindcss";
 
-.scrollbar-hide::-webkit-scrollbar{
-    display: none;
+:root {
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-500: #6366f1;
+  --brand-600: #4f46e5;
+  --brand-700: #4338ca;
+  --surface: #f8fafc;
+  --ink: #0f172a;
 }
 
-
-.scrollbar-hide{
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+body {
+  background-color: var(--surface);
+  color: var(--ink);
 }
 
-.blog-content{
-    padding: 36px 0;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-.blog-content b{
-    margin-bottom: 10px;
-    font-weight: 500;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.blog-content p{
-    margin-bottom: 10px;
-    font-weight: 500;
+.blog-content {
+  padding: 2rem 0;
+  color: #334155;
+  line-height: 1.75;
+  font-size: 1.05rem;
 }
 
-
-.blog-content h1{
-    margin-bottom: 10px;
-    font-weight: 600;
-    font-size: 26px;
+.blog-content b {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #0f172a;
 }
 
-.blog-content h2{
-    margin-bottom: 10px;
-    font-weight: 500;
-    font-size: 22px;
+.blog-content p {
+  margin-bottom: 1rem;
+  font-weight: 400;
 }
 
-.blog-content h3{
-    margin-bottom: 10px;
-    font-weight: 500;
-    font-size: 18px;
+.blog-content h1 {
+  margin: 1.5rem 0 0.75rem;
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #0f172a;
 }
 
+.blog-content h2 {
+  margin: 1.25rem 0 0.75rem;
+  font-weight: 600;
+  font-size: 1.375rem;
+  color: #1e293b;
+}
+
+.blog-content h3 {
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #1e293b;
+}
+
+.rich-text-editor .tiptap {
+  min-height: 200px;
+}
+
+.rich-text-editor .tiptap p.is-editor-empty:first-child::before {
+  color: #94a3b8;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.rich-text-editor .tiptap ul,
+.blog-content ul {
+  list-style: disc;
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-editor .tiptap ol,
+.blog-content ol {
+  list-style: decimal;
+  margin-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-editor .tiptap blockquote,
+.blog-content blockquote {
+  border-left: 4px solid var(--brand-500);
+  margin: 1rem 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: #475569;
+  background: var(--brand-50);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.admin-input {
+  @apply w-full mt-2 px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100;
+}
+
+.admin-label {
+  @apply block text-sm font-semibold text-slate-700 mt-6 first:mt-0;
+}
+
+.admin-card {
+  @apply bg-white rounded-2xl border border-slate-200/80 shadow-sm;
+}

@@ -1,6 +1,7 @@
 import { ConnectDB } from "@/lib/config/db";
 import EmailModel from "@/lib/models/EmailModel";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth/requireAdmin";
 
 export async function POST(request) {
   try {
@@ -24,30 +25,21 @@ export async function POST(request) {
 
 
 export async function GET(request){
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
+    await ConnectDB();
     const emails = await EmailModel.find({});
     return NextResponse.json({emails});
 }
 
 export async function DELETE(request){
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
+    await ConnectDB();
     const id = await request.nextUrl.searchParams.get("id");
     await EmailModel.findByIdAndDelete(id);
 
     return NextResponse.json({success:true,msg:"Email Deleted"})
 }
-
-
-// export async function GET(request) {
-//   try {
-//     await ConnectDB(); // ✅ Always connect to DB before querying
-
-//     const emails = await EmailModel.find({}).sort({ date: -1 }); // Sort newest first (optional)
-    
-//     return NextResponse.json({ success: true, emails });
-//   } catch (error) {
-//     console.error("Error fetching emails:", error);
-//     return NextResponse.json(
-//       { success: false, message: "Failed to fetch emails" },
-//       { status: 500 }
-//     );
-//   }
-// }

@@ -2,6 +2,7 @@
 import { assets } from "@/Assets/assets";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -24,67 +25,75 @@ const Header = () => {
   };
 
   return (
-    <div className="py-10 px-5 md:px-12 lg:px-28 bg-gradient-to-br from-white via-gray-50 to-gray-100 text-black">
-      {/* Header Top: Logo and Button */}
-      <div className="flex justify-between items-center">
-        <Image
-          src={assets.logo}
-          alt="App Logo"
-          className="w-[130px] sm:w-auto h-auto"
-          width={130}
-          height={40}
-          priority
-        />
+    <header className="relative overflow-hidden text-white">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600" />
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 20% 20%, white 0, transparent 35%), radial-gradient(circle at 80% 0%, #c4b5fd 0, transparent 30%)",
+        }}
+      />
 
-        <button
-          className="flex items-center gap-2 font-medium py-2 px-5 sm:px-6 rounded-full border border-black bg-white hover:bg-black hover:text-white transition-all duration-300"
-          style={{ boxShadow: "-7px 7px 7px rgba(0, 0, 0, 0.25)" }}
-        >
-          Get started
+      <div className="relative py-12 px-5 md:px-12 lg:px-28">
+        <div className="flex justify-between items-center">
           <Image
-            src={assets.arrow}
-            alt="arrow"
-            width={16}
-            height={16}
-            className="w-4 h-4 object-contain"
+            src={assets.logo}
+            alt="App Logo"
+            className="w-[130px] sm:w-auto h-auto brightness-0 invert"
+            width={130}
+            height={40}
+            priority
           />
-        </button>
-      </div>
 
-      {/* Heading & Paragraph */}
-      <div className="text-center my-12">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-6 tracking-tight text-gray-900">
-          Latest Blogs
-        </h1>
-        <p className="max-w-[740px] mx-auto text-sm sm:text-base text-gray-700 leading-relaxed">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro facilis
-          quisquam nobis fugiat laborum aspernatur sint qui, dolorem ab quo
-          quaerat reprehenderit voluptatem quis sequi, laboriosam cupiditate
-          iste odio asperiores.Stay updated with our latest articles, insights,
-          and resources – delivered straight to your inbox.
-        </p>
-
-        {/* Email Form */}
-        <form
-          onSubmit={onSubmitHandler}
-          className="flex justify-between max-w-[500px] mx-auto mt-10 border border-black rounded-full overflow-hidden bg-white shadow-[-7px_7px_7px_0_#000000]"
-        >
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            type="email"
-            placeholder="Enter your email"
-            className="pl-5 flex-1 outline-none py-4 text-sm sm:text-base bg-transparent placeholder:text-gray-500"
-          />
-          <button
-            type="submit"
-            className="border-l border-black py-4 px-5 sm:px-8 bg-black text-white hover:bg-red-500 transition-all duration-300 font-bold"
+          <Link
+            href="/admin/login"
+            className="flex items-center gap-2 font-medium py-2.5 px-5 sm:px-6 rounded-full bg-white/15 backdrop-blur border border-white/25 hover:bg-white hover:text-indigo-700 transition-all duration-300"
           >
-            Subscribe
-          </button>
-        </form>
+            Admin
+            <Image
+              src={assets.arrow}
+              alt="arrow"
+              width={16}
+              height={16}
+              className="w-4 h-4 object-contain brightness-0 invert group-hover:invert-0"
+            />
+          </Link>
+        </div>
+
+        <div className="text-center my-14 sm:my-16 max-w-3xl mx-auto">
+          <span className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold tracking-wide bg-white/15 border border-white/20">
+            Stories · Ideas · Insights
+          </span>
+          <h1 className="text-4xl sm:text-6xl font-bold mb-5 tracking-tight">
+            Discover our latest blogs
+          </h1>
+          <p className="text-sm sm:text-lg text-indigo-100/95 leading-relaxed">
+            Curated articles on startup life, technology, and lifestyle. Subscribe
+            for new posts delivered to your inbox.
+          </p>
+
+          <form
+            onSubmit={onSubmitHandler}
+            className="flex flex-col sm:flex-row gap-2 sm:gap-0 max-w-lg mx-auto mt-10 rounded-2xl sm:rounded-full overflow-hidden bg-white/95 p-1.5 shadow-xl shadow-indigo-900/20"
+          >
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 outline-none py-3.5 px-5 text-sm sm:text-base bg-transparent text-slate-800 placeholder:text-slate-400 rounded-xl sm:rounded-full"
+            />
+            <button
+              type="submit"
+              className="py-3.5 px-6 sm:px-8 rounded-xl sm:rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold hover:from-indigo-500 hover:to-violet-500 transition-all"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </header>
   );
 };
 
